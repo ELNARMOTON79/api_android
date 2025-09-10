@@ -6,7 +6,7 @@ const pool = require('../db');
 // GET /usuarios
 router.get('/', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT id, nombre, apellido, correo, email, creado_en FROM usuarios ORDER BY id');
+    const { rows } = await pool.query('SELECT id, nombre, apellido, correo FROM usuarios ORDER BY id');
     console.log(rows); // Mostrar usuarios en la consola
     res.json(rows);
   } catch (err) {
