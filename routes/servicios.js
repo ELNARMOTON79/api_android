@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-//Obtener citas del usuario logeado
-//GET /citas
+//Listado de servicios
+//GET /servicios
 router.get('/', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM citas WHERE usuario_id = $1 ORDER BY id', [req.user.id]);
+    const { rows } = await pool.query('SELECT id, nombre_servicio, descripcion, precio FROM servicios ORDER BY id');
     res.json(rows);
   } catch (err) {
     console.error(err);
