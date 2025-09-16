@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const usuariosRouter = require('./routes/usuarios');
-
+const loginRouter = require('./routes/login');
 
 
 const app = express();
@@ -14,6 +14,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/usuarios', usuariosRouter);
+app.use('/login', loginRouter);
 
 app.get('/', (req, res) => res.send('API funcionando'));
 
