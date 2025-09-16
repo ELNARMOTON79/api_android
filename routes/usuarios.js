@@ -15,9 +15,9 @@ router.get('/', async (req, res) => {
   }
 });
 
-//get usuarios para login
-router.get('/login', async (req, res) => {
-  const { correo, contraseña } = req.query;
+//post usuarios para login
+router.post('/login', async (req, res) => {
+  const { correo, contraseña } = req.body;
   try {
     const { rows } = await pool.query(
       'SELECT id, nombre, apellido, correo FROM usuarios WHERE correo = $1 AND contraseña = $2',
@@ -32,7 +32,7 @@ router.get('/login', async (req, res) => {
 });
 
 // POST /usuarios
-router.post('/', async (req, res) => {
+router.post('/crearusuario', async (req, res) => {
   const { nombre, apellido, correo, contraseña } = req.body;
   try {
     const { rows } = await pool.query(
