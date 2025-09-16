@@ -15,21 +15,18 @@ router.get('/', async (req, res) => {
   }
 });
 
-// PUT /usuarios/:id
-//Modificar informacion del usuario
-router.put('/:id', async (req, res) => {
+// POST /usuarios
+router.post('/', async (req, res) => {
+  const { nombre, apellido, correo } = req.body;
   try {
-    const { id } = req.params;
-    const { nombre, apellido, correo, contraseña } = req.body;
     const { rows } = await pool.query(
-      'UPDATE usuarios SET nombre = $1, apellido = $2, correo = $3, contraseña = $4 WHERE id = $5 RETURNING id, nombre, apellido, correo',
-      [nombre, apellido, correo, contraseña, id]
+      'INSERT INTO usuarios (nombre, apellido, correo, contraseña) VALUES ($1, $2, $3, $4) RETURNING id, nombre, apellido, correo',
+      [nombre, apellido, correo, contraseña]
     );
-    if (rows.length === 0) return res.status(404).json({ error: 'No encontrado' });
-    res.json(rows[0]);
+    res.status(201).json(rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Error al actualizar' });
+    res.status(500).json({ error: 'Error en servidor' });
   }
-}); 
+});
 module.exports = router;
