@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 // POST /login
-router.post('/', async (req, res) => {
+router.get('/', async (req, res) => {
   const { correo, contraseña } = req.body;
   try {
     const { rows } = await pool.query(
