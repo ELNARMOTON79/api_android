@@ -5,6 +5,7 @@ const cors = require('cors');
 const usuariosRouter = require('./routes/usuarios');
 
 
+
 const app = express();
 app.use(cors({
   // en producción, restringe al origen de tu app: example: origin: 'https://mi-app.web.app'

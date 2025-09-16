@@ -1,12 +1,11 @@
-// routes/login.js
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// POST /login
-router.post('/', async (req, res) => {
+//post usuarios para login
+router.post('/login', async (req, res) => {
+  const { correo, contraseña } = req.body;
   try {
-    const { correo, contraseña } = req.body;
     const { rows } = await pool.query(
       'SELECT id, nombre, apellido, correo FROM usuarios WHERE correo = $1 AND contraseña = $2',
       [correo, contraseña]
@@ -18,5 +17,3 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Error en servidor' });
   }
 });
-
-module.exports = router;
