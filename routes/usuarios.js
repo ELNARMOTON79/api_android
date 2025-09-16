@@ -15,13 +15,29 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /usuarios
-router.post('/', async (req, res) => {
-  const { nombre, apellido, correo } = req.body;
+//get usuarios para login
+router.get('/login', async (req, res) => {
+  const { correo, contraseña } = req.query;
   try {
     const { rows } = await pool.query(
-      'INSERT INTO usuarios (nombre, apellido, correo, contraseña) VALUES ($1, $2, $3, $4) RETURNING id, nombre, apellido, correo',
-      [nombre, apellido, correo, contraseña]
+      'SELECT id, nombre, apellido, correo FROM usuarios WHERE correo = $1 AND contraseña = $2',
+      [correo, contraseña]
+    );
+    if (rows.length === 0) return res.status(401).json({ error: 'Credenciales inválidas' });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error en servidor' });
+  }
+});
+
+// POST /usuarios
+router.post('/', async (req, res) => {
+  const { nombre, apellido, correo, contraseña } = req.body;
+  try {
+    const { rows } = await pool.query(
+      'INSERT INTO usuarios (nombre, apellido, correo, contraseña, id_rol) VALUES ($1, $2, $3, $4, $5) RETURNING id, nombre, apellido, correo, id_rol',
+      [nombre, apellido, correo, contraseña, id_rol = 2] 
     );
     res.status(201).json(rows[0]);
   } catch (err) {
@@ -30,3 +46,4 @@ router.post('/', async (req, res) => {
   }
 });
 module.exports = router;
+
