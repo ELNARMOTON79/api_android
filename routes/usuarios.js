@@ -14,14 +14,16 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Mantén tu POST existente pero corrige la sintaxis:
+// POST corregido:
 router.post('/', async (req, res) => {
     const { nombre, apellido, correo, contrasena } = req.body;
     const id_rol = 2; // Rol por defecto
     try {
         const { rows } = await pool.query(
-            'INSERT INTO usuarios (nombre, apellido, correo, contrasena) VALUES ($1, $2, $3, $4) RETURNING id, nombre, apellido, correo',
-            [nombre, apellido, correo, contrasena]
+            'INSERT INTO usuarios (nombre, apellido, correo, contrasena, id_rol) VALUES ($1, $2, $3, $4, $5) RETURNING id, nombre, apellido, correo',
+            //                                                         ↑ Agregué id_rol        ↑ Agregué $5
+            [nombre, apellido, correo, contrasena, id_rol]
+            //                                    ↑ Agregué id_rol
         );
         res.status(201).json(rows[0]);
     } catch (error) {
