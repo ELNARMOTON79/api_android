@@ -5,14 +5,14 @@ const pool = require('../db');
 
 router.post('/', async (req, res) => {
     try {
-        const { nombre, apellido, correo, contraseña } = req.body;
+        const { nombre, apellido, correo, contrasena } = req.body;
         
         // Log para debugging
-        console.log('Datos recibidos:', { nombre, apellido, correo, contraseña });
+        console.log('Datos recibidos:', { nombre, apellido, correo, contrasena });
         
         const { rows } = await pool.query(
             'INSERT INTO usuarios (nombre, apellido, correo, contrasena) VALUES ($1, $2, $3, $4) RETURNING id, nombre, apellido, correo',
-            [nombre, apellido, correo, contraseña]
+            [nombre, apellido, correo, contrasena]
         );
         
         console.log('Usuario creado:', rows[0]);
