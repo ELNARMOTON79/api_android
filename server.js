@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const usuariosRouter = require('./routes/usuarios');
 const loginRouter = require('./routes/login');
-
+const registroRoutes = require('./routes/registro');
 
 const app = express();
 app.use(cors({
@@ -15,6 +15,7 @@ app.use(express.json());
 
 app.use('/usuarios', usuariosRouter);
 app.use('/login', loginRouter);
+app.use('/usuarios', registroRouter);
 
 app.get('/', (req, res) => res.send('API funcionando'));
 
