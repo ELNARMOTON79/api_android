@@ -17,6 +17,7 @@ router.get('/', async (req, res) => {
 // Mantén tu POST existente pero corrige la sintaxis:
 router.post('/', async (req, res) => {
     const { nombre, apellido, correo, contrasena } = req.body;
+    const id_rol = 2; // Rol por defecto
     try {
         const { rows } = await pool.query(
             'INSERT INTO usuarios (nombre, apellido, correo, contrasena) VALUES ($1, $2, $3, $4) RETURNING id, nombre, apellido, correo',

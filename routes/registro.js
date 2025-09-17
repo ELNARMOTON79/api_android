@@ -6,6 +6,7 @@ const pool = require('../db');
 router.post('/', async (req, res) => {
     try {
         const { nombre, apellido, correo, contrasena } = req.body;
+        const id_rol = 2; // Rol por defecto
         
         // Log para debugging
         console.log('Datos recibidos:', { nombre, apellido, correo, contrasena });
