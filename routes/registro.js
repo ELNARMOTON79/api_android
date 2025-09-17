@@ -31,30 +31,3 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
-
-
-
-
-// server.js
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const usuariosRouter = require('./routes/usuarios');
-
-const registroRoutes = require('./routes/registro');
-
-const app = express(); // ✅ Definir app PRIMERO
-
-app.use(cors({
-    origin: true
-}));
-app.use(express.json());
-
-app.use('/usuarios', usuariosRouter);
-
-app.use('/usuarios', registroRouter);
-
-app.get('/', (req, res) => res.send('API funcionando'));
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`)); 
