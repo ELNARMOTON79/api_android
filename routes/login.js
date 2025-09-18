@@ -11,8 +11,8 @@ router.get('/', async (req, res) => {
       return res.status(400).json({ error: 'Correo y contraseña son requeridos' });
     }
     const { rows } = await pool.query(
-      'SELECT id, nombre, apellido, correo, id_rol FROM usuarios WHERE correo = $1 AND contrasena = $2',
-      [correo, contrasena]
+      'SELECT id, nombre, apellido, correo, id_rol FROM usuarios WHERE correo = $1 AND contrasena = $2 AND id_rol = $3',
+      [correo, contrasena, '2']
     );
     if (rows.length === 0) return res.status(401).json({ error: 'Credenciales inválidas' });
     res.json(rows[0]);
