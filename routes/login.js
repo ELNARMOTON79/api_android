@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const bcrypt = require('bcrypt');
 
 // GET /login
 router.get('/', async (req, res) => {
@@ -11,11 +12,21 @@ router.get('/', async (req, res) => {
       return res.status(400).json({ error: 'Correo y contraseña son requeridos' });
     }
     const { rows } = await pool.query(
-      'SELECT id, nombre, apellido, correo, id_rol FROM usuarios WHERE correo = $1 AND contrasena = $2 AND id_rol = $3',
-      [correo, contrasena, '2']
+      'SELECT id, nombre, apellido, correo, id_rol, contrasena FROM usuarios WHERE correo = $1 AND id_rol = $2',
+      [correo, '2']
     );
     if (rows.length === 0) return res.status(401).json({ error: 'Credenciales inválidas' });
-    res.json(rows[0]);
+    
+    const user = rows[0];
+    const isValidPassword = await bcrypt.compare(contrasena, user.contrasena);
+    
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+    
+    // Remove password from response
+    const { contrasena: _, ...userResponse } = user;
+    res.json(userResponse);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error en servidor' });
