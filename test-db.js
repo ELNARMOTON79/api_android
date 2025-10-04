@@ -4,25 +4,33 @@ const pool = require('./db');
 
 async function testConnection() {
   try {
-    // Ejecutamos consulta a la tabla usuarios
-    const { rows } = await pool.query('SELECT * FROM usuarios');
+    //Insertar usuario de prueba mandando llamar el endpoint de registro /routes/registro.js y insertar en la tabla nfc un token unico al usuario
+    //nombre, apellido, correo, contrasena, id_rol
+    //Rafael, Perez, rafael.perez@example.com, contrasena123, 2
+    const client = await pool.connect();
+    const insertUser = `
+      INSERT INTO usuarios (nombre, apellido, correo, contrasena, id_rol)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id;
+    `;
+    const userResult = await client.query(insertUser, ['Rafael', 'Perez', 'rafael.perez@example.com', 'contrasena123', 2]);
+    const userId = userResult.rows[0].id;
 
-    console.log("✅ Conexión exitosa a PostgreSQL en Render");
-    console.log("📋 Usuarios en la tabla:");
+    const insertNfc = `
+      INSERT INTO nfc (id_usuario, token)
+      VALUES ($1, encode(gen_random_bytes(16), 'hex'))
+      RETURNING token;
+    `;
+    const nfcResult = await client.query(insertNfc, [userId]);
 
-    if (rows.length === 0) {
-      console.log("⚠️ No hay usuarios en la tabla todavía.");
-    } else {
-      rows.forEach(user => {
-        console.log(`ID: ${user.id} | Nombre: ${user.nombre} | Email: ${user.email}`);
-      });
-    }
-
-    process.exit(0);
-  } catch (err) {
-    console.error("❌ Error al conectar o consultar la base de datos:", err.message);
-    process.exit(1);
+    console.log('Conexión exitosa y usuario de prueba insertado con token NFC:', nfcResult.rows[0]);
+    client.release();
+  } catch (error) {
+    console.error('Error al conectar a la base de datos:', error);
   }
 }
 
 testConnection();
+
+
+//como inicar el test?//node test-db.js
