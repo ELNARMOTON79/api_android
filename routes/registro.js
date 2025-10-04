@@ -18,6 +18,15 @@ router.post('/', async (req, res) => {
         
         console.log('Usuario creado:', rows[0]);
         res.status(201).json(rows[0]);
+
+        // Recuperar el ID del usuario recién creado
+        const usuarioId = rows[0].id;
+        //Ingresar token en tabla nfc usando encode(gen_random_bytes(16), 'hex')
+        await pool.query(
+            'INSERT INTO nfc (id_usuario, token) VALUES ($1, encode(gen_random_bytes(16), \'hex\'))',
+            [usuarioId]
+        );
+
         
     } catch (err) {
         console.error('Error completo:', err);
