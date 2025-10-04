@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const crypto = require('crypto'); // añadido
 
 router.post('/', async (req, res) => {
     const client = await pool.connect(); // Obtener conexión individual
@@ -12,21 +13,29 @@ router.post('/', async (req, res) => {
         // 🌀 Iniciamos la transacción
         await client.query('BEGIN');
 
-        // 1️⃣ Insertar el nuevo usuario
+        // 1️⃣ Insertar el nuevo usuario (devolver todos los campos para detectar nombre de columna de id)
         const userResult = await client.query(
-            'INSERT INTO usuarios (nombre, apellido, correo, contrasena, id_rol) VALUES ($1, $2, $3, $4, $5) RETURNING id, nombre, apellido, correo',
+            'INSERT INTO usuarios (nombre, apellido, correo, contrasena, id_rol) VALUES ($1, $2, $3, $4, $5) RETURNING *',
             [nombre, apellido, correo, contrasena, id_rol]
         );
 
         const newUser = userResult.rows[0];
         console.log('Usuario creado:', newUser);
 
-        // 2️⃣ Insertar el token NFC vinculado al usuario recién creado
+        // Determinar el id del usuario probando nombres comunes
+        const userId = newUser.id ?? newUser.id_usuario ?? newUser.usuario_id;
+        if (!userId) {
+            throw new Error('No se obtuvo el id del usuario tras la inserción. Revisar esquema de la tabla usuarios.');
+        }
+
+        // 2️⃣ Generar token NFC en Node y usar el id correcto
+        const token = crypto.randomBytes(16).toString('hex');
+
         const nfcResult = await client.query(
             `INSERT INTO nfc (id_usuario, token)
-             VALUES ($1, encode(gen_random_bytes(16), 'hex'))
+             VALUES ($1, $2)
              RETURNING id, token`,
-            [newUser.id]
+            [userId, token]
         );
 
         const newNfc = nfcResult.rows[0];
