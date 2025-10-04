@@ -12,23 +12,8 @@ router.post('/', async (req, res) => {
         console.log('Datos recibidos:', { nombre, apellido, correo, contrasena });
         
         const { rows } = await pool.query(
-            `
-            WITH nuevo_usuario AS (
-                INSERT INTO usuarios (nombre, apellido, correo, contrasena, id_rol)
-                VALUES ($1, $2, $3, $4, $5)
-                RETURNING id, nombre, apellido, correo
-            ),
-            nueva_nfc AS (
-                INSERT INTO nfc (id_usuario, token)
-                SELECT id, encode(gen_random_bytes(16), 'hex')
-                FROM nuevo_usuario
-                RETURNING id_usuario
-            )
-            SELECT nu.id, nu.nombre, nu.apellido, nu.correo
-            FROM nuevo_usuario nu
-            JOIN nueva_nfc nnfc ON nu.id = nnfc.id_usuario
-            `,
-            [nombre, apellido, correo, contrasena, id_rol]
+            'INSERT INTO usuarios (nombre, apellido, correo, contrasena) VALUES ($1, $2, $3, $4) RETURNING id, nombre, apellido, correo',
+            [nombre, apellido, correo, contrasena]
         );
         
         console.log('Usuario creado:', rows[0]);
