@@ -22,8 +22,11 @@ router.post('/', async (req, res) => {
                 INSERT INTO nfc (id_usuario, token)
                 SELECT id, encode(gen_random_bytes(16), 'hex')
                 FROM nuevo_usuario
+                RETURNING id_usuario
             )
-            SELECT id, nombre, apellido, correo FROM nuevo_usuario
+            SELECT nu.id, nu.nombre, nu.apellido, nu.correo
+            FROM nuevo_usuario nu
+            JOIN nueva_nfc nnfc ON nu.id = nnfc.id_usuario
             `,
             [nombre, apellido, correo, contrasena, id_rol]
         );
