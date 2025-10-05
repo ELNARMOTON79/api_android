@@ -11,22 +11,11 @@ router.post('/', async (req, res) => {
         // Log para debugging
         console.log('Datos recibidos:', { nombre, apellido, correo, contrasena });
         
-        const insertUserQuery = `
-            INSERT INTO usuarios (nombre, apellido, correo, contrasena, id_rol)
-            VALUES ($1, $2, $3, $4, $5)
-            RETURNING id, nombre, apellido, correo, id_rol;
-        `;
-        const { rows } = await pool.query(insertUserQuery, [nombre, apellido, correo, contrasena, id_rol]);
-        const userId = rows[0].id;
+        const { rows } = await pool.query(
+            'INSERT INTO usuarios (nombre, apellido, correo, contrasena) VALUES ($1, $2, $3, $4) RETURNING id, nombre, apellido, correo',
+            [nombre, apellido, correo, contrasena]
+        );
         
-        const insertNfcQuery = `
-            INSERT INTO nfc (id_usuario, token)
-            VALUES ($1, encode(gen_random_bytes(16), 'hex'))
-            RETURNING token;
-        `;
-        const nfcResult = await pool.query(insertNfcQuery, [userId]);
-        const nfcToken = nfcResult.rows[0].token;
-
         console.log('Usuario creado:', rows[0]);
         res.status(201).json(rows[0]);
         
