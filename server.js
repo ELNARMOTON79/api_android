@@ -17,6 +17,7 @@ app.use(express.json());
 app.use('/usuarios', usuariosRouter);
 app.use('/login', loginRouter);
 app.use('/usuarios', registroRoutes);
+app.use('/consultardata', consultardata);
 
 app.get('/', (req, res) => res.send('API funcionando'));
 
