@@ -5,6 +5,7 @@ const cors = require('cors');
 const usuariosRouter = require('./routes/usuarios');
 const loginRouter = require('./routes/login');
 const registroRoutes = require('./routes/registro');
+const consultardata = require('./routes/consul_data');
 
 const app = express();
 app.use(cors({
